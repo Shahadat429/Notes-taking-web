@@ -3,6 +3,8 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
+import userRoutes from './routes/userRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -25,6 +27,9 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.get('/', (req, res) => {
     res.send('Notesssssssssssssssssssssssssssssssssss');
 })
+
+app.use('/api/user', userRoutes);
+app.use('/api/notes', notesRoutes);
 
 
 

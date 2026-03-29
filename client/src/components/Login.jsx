@@ -5,7 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
     const navigate = useNavigate();
-    const {setShowUserLogin, setUser, axios} = useContext(AuthContext);
+    const { setShowUserLogin, setUser, axios } = useContext(AuthContext);
     const [state, setState] = useState("login");
 
     const [formData, setFormData] = useState({
@@ -17,19 +17,21 @@ const Login = () => {
     // Handle form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const { data } = await axios.post(`/api/user/${state}`, formData);
-
             if (data.success) {
-                toast.success(`${state === "login" ? "Logged in" : "Registered"} successfully`);
-                setUser(data.user); // set user context/state
-                setShowUserLogin(false); // close modal
-                navigate("/"); // redirect
+                toast.success(data.message);
+                setUser(data.user);
+                console.log("User data after login/signup:", data.user);
+                setShowUserLogin(false);
+                // navigate("/");
             } else {
                 toast.error(data.message);
             }
+
         } catch (error) {
-            toast.error("Invalid credentials");
+            toast.error(error.response?.data?.message || "Something went wrong");
         }
     };
 

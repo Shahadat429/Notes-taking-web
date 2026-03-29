@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 const Notes = () => {
 
-    const { user, setShowUserLogin, setNotes } = useContext(AuthContext);
+    const { user, setShowUserLogin, setNotes, axios } = useContext(AuthContext);
     const [notesText, setNotesText] = useState('');
     const [title, setTitle] = useState('');
     const [isFocused, setIsFocused] = useState(false);
@@ -23,7 +23,7 @@ const Notes = () => {
         autoResize(notesRef.current);
     }
 
-    const handleBlur = (e) => {
+    const handleBlur = async (e) => {
         if (!wrapperRef.current.contains(e.relatedTarget || document.body)) {
 
             if (!user) {
@@ -35,22 +35,29 @@ const Notes = () => {
             }
 
             // prevent empty note
-            if (!title.trim() && !notesText.trim()) {
+            // if (!title.trim() && !notesText.trim()) {
+            //     setIsFocused(false);
+            //     return;
+            // }
+
+            try {
+                const { data } = await axios.post("/api/notes/createNotes", {
+                    title: title.trim(),
+                    notesText: notesText.trim()
+                });
+                if (data.success) {
+                    toast.success(data.message);
+                    setNotes((prev) => [ data.note , ...prev]);
+                } else {
+                    toast.error(data.message);
+                }
+            } catch (error) {
+                toast.error("An error occurred while creating the note.");
+            } finally {
                 setIsFocused(false);
-                return;
+                setNotesText('');
+                setTitle('');
             }
-
-            const newNote = {
-                id: Date.now(),
-                title,
-                text: notesText
-            };
-
-            setNotes(prev => [newNote, ...prev]); // 🔥 SAVE
-
-            setIsFocused(false);
-            setNotesText('');
-            setTitle('');
         }
     };
 

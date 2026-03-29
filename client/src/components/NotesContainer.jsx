@@ -1,10 +1,11 @@
 import { useContext } from "react";
 import { useState, useRef, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const NotesContainer = () => {
 
-    const { notes, setNotes } = useContext(AuthContext);
+    const { notes, setNotes, axios } = useContext(AuthContext);
 
     const [activeNote, setActiveNote] = useState(null);
     const titleRef = useRef(null);
@@ -12,10 +13,23 @@ const NotesContainer = () => {
 
     const openNote = (note) => setActiveNote(note);
 
-    const handleSave = (updatedNote) => {
-        const filteredNotes = notes.filter(n => n.id !== updatedNote.id);
-        setNotes([updatedNote, ...filteredNotes]);
-        setActiveNote(null);
+    const handleSave = async (updatedNote) => {
+        try {
+            const { data } = await axios.put(`/api/notes/updateNote/${updatedNote._id}`, {
+                title: updatedNote.title,
+                notesText: updatedNote.text
+            });
+            if (data.success) {
+                setNotes((prev) => {
+                    const filteredNotes = prev.filter(n => n._id !== updatedNote._id);
+                    return [data.note, ...filteredNotes];
+                });
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error("An error occurred while saving the note.");
+        }
     };
 
     // Move cursor to end when overlay opens
@@ -25,7 +39,21 @@ const NotesContainer = () => {
             el.focus();
             el.setSelectionRange(el.value.length, el.value.length);
         }
-    }, [activeNote?.id]); // 👈 only when note opens
+    }, [activeNote?.id]);
+
+    // Just closes the overlay without saving
+    const handleClose = () => {
+        handleSave(activeNote); // Save changes before closing
+        setActiveNote(null);  // Hide the overlay
+    };
+
+    // When clicking outside, save and close
+    const handleOverlayClick = async () => {
+        if (activeNote) {
+            await handleSave(activeNote); // Save first
+            setActiveNote(null);          // Then close overlay
+        }
+    };
 
     // Auto-resize textareas
     const autoResize = (el) => {
@@ -44,20 +72,20 @@ const NotesContainer = () => {
         <div className="p-2 sm:p-6">
 
             {/* Notes Grid */}
-            <div className="columns-1 md:columns-3 lg:columns-4 gap-4 w-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-2 w-full">
                 {notes.map(note => (
                     <div
                         key={note.id}
                         onClick={() => openNote(note)}
                         className="break-inside-avoid mb-4 cursor-pointer rounded-xl border bg-white p-3 sm:p-4 shadow-sm hover:shadow-md transition"
                     >
-                        {note.title && (
-                            <h3 className="whitespace-pre-wrap break-words font-bold text-base sm:text-lg md:text-xl text-gray-900 mb-1 sm:mb-2">
-                                {note.title}
-                            </h3>
-                        )}
+
+                        <h3 className="whitespace-pre-wrap break-words font-bold text-base sm:text-lg md:text-xl text-gray-900 mb-1 sm:mb-2">
+                            {note.title || ""}
+                        </h3>
+
                         <p className="whitespace-pre-wrap break-words text-sm sm:text-base text-gray-800">
-                            {note.text || "Empty note"}
+                            {note.text || ""}
                         </p>
                     </div>
                 ))}
@@ -67,7 +95,7 @@ const NotesContainer = () => {
             {activeNote && (
                 <div
                     className="fixed inset-0 bg-black/40 flex items-center justify-center p-2 sm:p-4 z-50"
-                    onClick={() => handleSave(activeNote)}
+                    onClick={handleOverlayClick}
                 >
                     <div
                         className="bg-white w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-xl p-4 sm:p-6 shadow-lg flex flex-col overflow-hidden"
@@ -96,7 +124,7 @@ const NotesContainer = () => {
                         />
                         <div className="flex justify-end mt-3">
                             <button
-                                onClick={() => handleSave(activeNote)}
+                                onClick={() => handleClose()}
                                 className="px-4 py-1 rounded-md hover:bg-gray-100 text-sm sm:text-base"
                             >
                                 Close

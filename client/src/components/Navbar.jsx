@@ -5,7 +5,19 @@ import { NavLink } from 'react-router';
 
 const Navbar = () => {
 
-    const { showUserLogin, setShowUserLogin, user, setUser } = useContext(AuthContext);
+    const { showUserLogin, setShowUserLogin, user, setUser, axios } = useContext(AuthContext);
+
+    const logout = async() => {
+        try {
+            const { data } = await axios.post("/api/user/logout");
+            if(data.success) {
+                setUser(null);
+                setShowUserLogin(false);
+            }
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    }
 
     return (
         <div>
@@ -13,7 +25,7 @@ const Navbar = () => {
                 <div className="flex-1">
                     <div className='flex items-center'>
                         <img className='w-10 h-10' src={SNotes} alt="S Notes" />
-                        <a className="btn btn-ghost text-xl">S Notes</a>
+                        <a className="btn btn-ghost text-xl">Shahadat Notes</a>
                         <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-[400px] bg-gray-200 h-auto md:h-13 ml-10 border-none outline-none" />
                     </div>
                 </div>
@@ -38,7 +50,7 @@ const Navbar = () => {
                                     </a>
                                 </li>
                                 <li><a>Settings</a></li>
-                                <li><button onClick={() => setUser(null)}><a>Logout</a></button></li>
+                                <li><button onClick={logout}>Logout</button></li>
                             </ul>
                         </div>
                         ) : (
