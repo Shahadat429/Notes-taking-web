@@ -16,7 +16,8 @@ await connectDB();
 
 // allowed multiple origins
 const allowedOrigins = [
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://shahadat-notes-taking-web.vercel.app'
 ]
 
 // middlewares
