@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 const AuthProvider = ({ children }) => {
 
