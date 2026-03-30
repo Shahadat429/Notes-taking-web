@@ -17,7 +17,8 @@ await connectDB();
 // allowed multiple origins
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://notes-taking-web-kohl.vercel.app'
+    'https://notes-taking-web-kohl.vercel.app',
+    'https://cerulean-taiyaki-1ac857.netlify.app'
 ]
 
 // middlewares
