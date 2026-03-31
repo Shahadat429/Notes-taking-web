@@ -16,7 +16,7 @@ await connectDB();
 
 // allowed multiple origins
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || []
-console.log("Allowed Origins:", allowedOrigins);
+// console.log("Allowed Origins:", allowedOrigins);
 
 // middlewares
 app.use(express.json());
