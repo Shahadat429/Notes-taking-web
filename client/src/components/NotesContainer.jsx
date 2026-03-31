@@ -17,7 +17,7 @@ const NotesContainer = () => {
         try {
             const { data } = await axios.put(`/api/notes/updateNote/${updatedNote._id}`, {
                 title: updatedNote.title,
-                notesText: updatedNote.text
+                text: updatedNote.text
             });
             if (data.success) {
                 setNotes((prev) => {

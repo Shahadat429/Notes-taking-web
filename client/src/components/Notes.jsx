@@ -5,13 +5,13 @@ import toast from 'react-hot-toast';
 const Notes = () => {
 
     const { user, setShowUserLogin, setNotes, axios } = useContext(AuthContext);
-    const [notesText, setNotesText] = useState('');
+    const [text, setText] = useState('');
     const [title, setTitle] = useState('');
     const [isFocused, setIsFocused] = useState(false);
 
     const wrapperRef = useRef(null);
     const titleRef = useRef(null);
-    const notesRef = useRef(null);
+    const textRef = useRef(null);
 
     const handleTitleChange = (e) => {
         setTitle(e.target.value);
@@ -19,15 +19,15 @@ const Notes = () => {
     }
 
     const handleNotesChange = (e) => {
-        setNotesText(e.target.value);
-        autoResize(notesRef.current);
+        setText(e.target.value);
+        autoResize(textRef.current);
     }
 
     const handleBlur = async (e) => {
         if (!wrapperRef.current.contains(e.relatedTarget || document.body)) {
 
             if (!user) {
-                setNotesText('');
+                setText('');
                 setTitle('');
                 toast.error("Please login first");
                 setShowUserLogin(true);
@@ -35,7 +35,7 @@ const Notes = () => {
             }
 
             // prevent empty note
-            // if (!title.trim() && !notesText.trim()) {
+            // if (!title.trim() && !text.trim()) {
             //     setIsFocused(false);
             //     return;
             // }
@@ -43,7 +43,7 @@ const Notes = () => {
             try {
                 const { data } = await axios.post("/api/notes/createNotes", {
                     title: title.trim(),
-                    notesText: notesText.trim()
+                    text: text.trim()
                 });
                 if (data.success) {
                     toast.success(data.message);
@@ -55,7 +55,7 @@ const Notes = () => {
                 toast.error("An error occurred while creating the note.");
             } finally {
                 setIsFocused(false);
-                setNotesText('');
+                setText('');
                 setTitle('');
             }
         }
@@ -73,7 +73,7 @@ const Notes = () => {
     useEffect(() => {
         if (isFocused) {
             autoResize(titleRef.current);
-            autoResize(notesRef.current);
+            autoResize(textRef.current);
         }
     }, [isFocused])
 
@@ -103,16 +103,14 @@ const Notes = () => {
                 )}
 
                 <textarea
-                    ref={notesRef}
-                    value={notesText}
+                    ref={textRef}
+                    value={text}
                     name='notes'
                     onChange={handleNotesChange}
                     placeholder="Take a note..."
                     className="w-full outline-none border-none overflow-hidden resize-none"
                     rows={1}
                 />
-
-
 
             </div>
 
