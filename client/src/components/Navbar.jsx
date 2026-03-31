@@ -26,7 +26,7 @@ const Navbar = () => {
                     <div className='flex items-center'>
                         <img className='w-10 h-10' src={SNotes} alt="S Notes" />
                         <a className="btn btn-ghost text-xl">Shahadat Notes</a>
-                        <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-[400px] bg-gray-200 h-auto md:h-13 ml-10 border-none outline-none" />
+                        {/* <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-[400px] bg-gray-200 h-auto md:h-13 ml-10 border-none outline-none" /> */}
                     </div>
                 </div>
                 <div className="flex gap-2">
