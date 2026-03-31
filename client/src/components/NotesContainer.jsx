@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 const NotesContainer = () => {
 
-    const { notes, setNotes, axios } = useContext(AuthContext);
+    const { notes, setNotes, axios, user } = useContext(AuthContext);
 
     const [activeNote, setActiveNote] = useState(null);
     const titleRef = useRef(null);
@@ -73,7 +73,7 @@ const NotesContainer = () => {
 
             {/* Notes Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-2 w-full">
-                {notes.map(note => (
+                {notes.map((note) => (
                     <div
                         key={note.id}
                         onClick={() => openNote(note)}
